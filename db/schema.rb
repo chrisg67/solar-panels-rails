@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130809081811) do
+ActiveRecord::Schema.define(version: 20130809092029) do
 
   create_table "five_minute_readings", force: true do |t|
     t.datetime "time"
@@ -20,5 +20,7 @@ ActiveRecord::Schema.define(version: 20130809081811) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "five_minute_readings", ["time"], name: "index_five_minute_readings_on_time", unique: true
 
 end
