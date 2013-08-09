@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-SolarPanels::Application.config.secret_key_base = 'ca5603508c6df18ba0ca7c21de84dcc3a7ad8f1deb53909368e8c5ee08f733162321d64d5e015cdc83fab3967ebc70cf174b2e86357ef2014e31911939c0d3ce'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+SolarPanels::Application.config.secret_key_base = secure_token
