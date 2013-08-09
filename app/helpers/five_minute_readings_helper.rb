@@ -1,0 +1,2 @@
+module FiveMinuteReadingsHelper
+end
