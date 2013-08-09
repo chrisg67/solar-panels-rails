@@ -1,5 +1,10 @@
 SolarPanels::Application.routes.draw do
-  get "five_minute_readings/new"
+  resources :five_minute_readings
+
+  #get "five_minute_readings/new"
+  post "five_minute_readings/new"
+  match '/new_five_minute_reading', to: 'five_minute_readings#new', via: 'get'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
