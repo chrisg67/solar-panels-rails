@@ -16,6 +16,3 @@
 //= require bootstrap-datetimepicker
 //= require turbolinks
 //= require_tree .
-
-//jQuery ->
-//    $('.datepicker').datepicker()

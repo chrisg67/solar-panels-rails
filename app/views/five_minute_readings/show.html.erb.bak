@@ -1,14 +1,14 @@
 <% provide(:title, 'New Reading') %>
-<h1>New Reading</h1>
+<h1>Show Readings</h1>
 <div class="row">
   <div class="span6 offset3">
-    <%= form_for(:reading) do |f| %>
+    <%= form_for(:graph) do |g| %>
         <%#= render 'shared/error_messages' %>
-        <%= f.label :time %>
+        <%= f.label :date %>
         <div class="well">
-          <div id="datetimepicker1" class="input-append date">
+          <div id="date1" class="input-append date">
             <%#= f.text_field :time, :data_format {'dd/MM/yyyy hh:mm:ss'} %>
-            <input id="reading_time" name="reading[time]" type="text" data-format="dd/MM/yyyy hh:mm" />
+            <input id="graph_date" name="graph[date]" type="text" data-format="dd/MM/yyyy" />
             <span class="add-on">
               <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
             </span>
@@ -17,19 +17,23 @@
         <!-- TODO move this into five_minute_readings.js.coffee -->
         <script type="text/javascript">
             $(function() {
-                $('#datetimepicker1').datetimepicker({
-                    format: 'dd/MM/yyyy hh:mm',
+                $('#date1').datetimepicker({
+                    format: 'dd/MM/yyyy',
                     language: 'en',
                     pickSeconds: false
                 });
             });
         </script>
-        <%= f.label :power, "Power Kw" %>
-        <%= f.number_field :power, step: "0.001" %>
-        <%= f.label :total_power, "Total Power KWh" %>
-        <%= f.number_field :total_power, step: "0.001" %>
-        <%= f.submit "Submit Reading", class: "btn btn-large btn-primary" %>
     <% end %>
+  </div>
+  <div class="span7 offset1">
+    <table>
+      <% FiveMinuteReading.where('time >= "2013-08-09" AND time < "2013-08-10"') do |r| %>
+          <tr>
+            <%= "<td>#{r.time}</td><td>#{r.power}</td><td>#{r.total_power}</td>" %>
+          </tr>
+      <% end %>
+    </table>
   </div>
 </div>
 <p>Find me in app/views/five_minute_readings/new.html.erb</p>

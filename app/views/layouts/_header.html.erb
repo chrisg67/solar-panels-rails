@@ -1,0 +1,30 @@
+    <header class="navbar navbar-fixed-top navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <%= link_to "Solar Panels", '#', id: "logo" %>
+          <nav>
+            <ul class="nav pull-right">
+              <!--<li><%#= link_to "Home",    root_path %></li>-->
+              <!--<li><%#= link_to "Help",    help_path %></li>-->
+              <li><%= link_to "Today", show_day_five_minute_readings_path(date: Date.today.strftime('%Y-%m-%d')) %></li>
+              <li><%= link_to "This Month", '#' %></li>
+              <li id="fat-menu" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  New Reading<b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><%= link_to "Five Minute", '/five_minute_readings/new' %></li>
+                  <li><%= link_to "Day", '#' %></li>
+                  <li><%= link_to "Month", '#' %></li>
+                  <!--<li class="divider"></li>-->
+                  <!--<li>-->
+                    <!--<%#= link_to "Sign out", signout_path, method: "delete" %>-->
+                  <!--</li>-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+ 

@@ -1,0 +1,24 @@
+<% provide(:title, 'Show Reading') %>
+<h1>Show Reading</h1>
+<div class="row">
+  <aside class="span6 offset3">
+    <section>
+      <table class="table table-striped table-bordered table-condensed">
+          <thead>
+              <tr>
+                <td>Time</td>
+                <td>Power kW</td>
+                <td>Total Power kWh</td>
+              </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td><%= @reading.time.strftime("%Y-%m-%d %H:%M:%S") %></td>
+                <td><%= @reading.power %></td>
+                <td><%= @reading.total_power %></td>
+              </tr>
+          </tbody>
+      </table>
+    </section>
+  </aside>
+</div>
