@@ -2,6 +2,7 @@ SolarPanels::Application.routes.draw do
   resources :five_minute_readings do
     collection do
       get 'show_day'
+      get 'show_month'
     end
   end
 
@@ -9,8 +10,7 @@ SolarPanels::Application.routes.draw do
   match '/new_five_minute_reading', to: 'five_minute_readings#new', via: 'get'
   match 'five_minute_readings/new', to: 'five_minute_readings#create', via: 'post'
   match 'five_minute_readings/new_api', to: 'five_minute_readings#create_api', via: 'post'
-  match '/show_day', to: 'five_minute_readings#show_day', via: 'get'
-
+ 
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
