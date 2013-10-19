@@ -14,7 +14,7 @@ class FiveMinuteReadingsController < ApplicationController
   def show_month
     @date = params[:date]
     @start_date = Date.strptime(@date, '%Y-%m')
-    @end_date   = @start_date + 1.month
+    @end_date   = @start_date + 1.month - 1.day
     @readings   = []
     (@start_date..@end_date).each do |d|  
       @this_date = d.strftime('%Y-%m-%d')

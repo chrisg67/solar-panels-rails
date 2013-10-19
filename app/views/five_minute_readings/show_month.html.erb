@@ -1,7 +1,7 @@
 <% provide(:title, 'Show Reading') %>
 <h1>Readings for <%= @date %></h1>
 <div class="row">
-  <aside class="span6 offset3">
+  <aside class="span10 offset1">
     <section>
       <script type="text/javascript" src="https://www.google.com/jsapi"></script>
       <script type="text/javascript">
@@ -9,7 +9,7 @@
           google.setOnLoadCallback(drawChart);
           function drawChart() {
               var data = new google.visualization.DataTable();
-              data.addColumn('datetime', 'Time');
+              data.addColumn('date', 'Day');
               data.addColumn('number', 'KWh');
               data.addRows([
               <% total_power = 0.0 %>
@@ -20,16 +20,19 @@
               <% end %>
               ]);
 
+              var options = {
+                  title: 'Solar Panel Output',
+                  vAxis: {title:"KWh", viewWindowMode: 'explicit', viewWindow:{max:30, min:0}},
+                  hAxis: {viewWindowMode: 'explicit',
+                      // TODO: make these dynamic, below is last of july to last of august
+                      viewWindow: { min: new Date(2013,06,31), max: new Date(2013,07,31) }
+                  },
+                  seriesType:"bars"
+              };
+
               // Create and draw the visualization.
-              new google.visualization.LineChart(document.getElementById('chart_div')).
-                      draw(data, {vAxes: {0: {maxValue: 4},
-                          1: {maxValue: 30}},
-                          hAxis: {viewWindowMode: 'pretty',
-                              maxValue: new Date(<%= (Date.strptime(@date+'-01','%Y-%m-%d')+1.month).strftime('%Y,%m-1,%d') %>)},
-                          series: {0:{targetAxisIndex:0},
-                              1:{targetAxisIndex:1}}
-                      }
-              );
+              new google.visualization.ComboChart(document.getElementById('chart_div')).
+                      draw(data, options);
           }
 
       </script>
