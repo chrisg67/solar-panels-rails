@@ -1,32 +1,62 @@
 <% provide(:title, 'Show Reading') %>
-<h1>Readings for <%= @date %></h1>
+<h1 id='heading'>Preparing Readings</h1>
 <div class="row">
-  <aside class="span10 offset1">
-    <section>
+  <div class="span1"></div>
+  <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
+    <button type="button" class="btn btn-default btn-lg" id="prev-month-button">
+      Prev Month <
+    </button>
+    <button type="button" class="btn btn-default btn-lg" id="prev-year-button">
+      Prev Year <<
+    </button>
+  </div>
+  <div class="span8" style="vertical-align:middle;display:table-cell;float:none">
       <script type="text/javascript" src="https://www.google.com/jsapi"></script>
       <script type="text/javascript">
           google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-              var data = new google.visualization.DataTable();
-              data.addColumn('date', 'Day');
-              data.addColumn('number', 'KWh');
-              data.addRows([
-              <% total_power = 0.0 %>
-              <% last_date = Date.strptime(@date+'-01','%Y-%m-01') %>
-              <% @readings.each do |r| %>
-                  <% total_power += r[:power_kWh] %>
-                  [new Date(<%= Date.strptime(r[:date]).strftime('%Y,%m-1,%d') %>), <%= r[:power_kWh].round(3) %>],
-              <% end %>
-              ]);
+          google.setOnLoadCallback(onLoad);
+          var year = <%= @year %>;
+          var month = <%= @month %>;
+
+          function onLoad() {
+              fetchMonth();
+              $("#prev-month-button").click(function(){
+                  month = month - 1;
+                  if ( month < 1 ) { month = 12; year -= 1; }
+                  fetchMonth();
+              });
+
+              $("#prev-year-button").click(function(){
+                  year = year - 1;
+                  fetchMonth();
+              });
+
+              $("#next-month-button").click(function(){
+                  month = month + 1;
+                  if ( month > 12 ) { month = 1; year += 1; }
+                  fetchMonth();
+              });
+
+              $("#next-year-button").click(function(){
+                  year = year + 1;
+                  fetchMonth();
+              });
+          }
+
+          function fetchMonth() {
+              var query = new google.visualization.Query('show_month.json?date='+year+'-'+month);
+              query.send(handleQueryResult)
+          }
+
+          function handleQueryResult(response) {
+              $('#heading').text('Readings for '+year+'-'+month);
+              $('#date').val(year+'-'+month);
+              //location.href = '?date='+year+'-'+month;
+              var data = response.getDataTable();
 
               var options = {
                   title: 'Solar Panel Output',
                   vAxis: {title:"KWh", viewWindowMode: 'explicit', viewWindow:{max:30, min:0}},
-                  hAxis: {viewWindowMode: 'explicit',
-                      // TODO: make these dynamic, below is last of july to last of august
-                      viewWindow: { min: new Date(2013,06,31), max: new Date(2013,07,31) }
-                  },
                   seriesType:"bars"
               };
 
@@ -37,51 +67,46 @@
 
       </script>
       <div id="chart_div" style="width: 100%; height: 500px; position: relative; "></div>
-      <div class="text-center">Total Power = <%= total_power.round(3) %> kWh</div>
-    </section>
-    <section>
-      <%= form_tag show_month_five_minute_readings_path, method: 'get' do %>
-          <%#= render 'shared/error_messages' %>
-          <%#= f.label :date %>
-          <div class="well">
-            <div id="date1" class="input-append date">
-              <%#= f.text_field :time, :data_format {'dd/MM/yyyy'} %>
-              <input id="date" name="date" type="text" data-format="yyyy-MM" value="<%= @date %>"/>
-              <span class="add-on">
-                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-              </span>
-            </div>
-          </div>
-          <!-- TODO move this into five_minute_readings.js.coffee -->
-          <script type="text/javascript">
-              $(function() {
-                  $('#date1').datetimepicker({
-                      format: 'yyyy-MM',
-                      language: 'en',
-                      pickTime: false
-                  });
-              });
-          </script>
-          <%= submit_tag 'Choose Date' %>
-      <% end %>
-    </section>
-    <section>
-      <table class="table table-striped table-bordered table-condensed">
-        <thead>
-            <tr>
-              <td>Time</td>
-              <td>Power kW</td>
-            </tr>
-        </thead>
-        <tbody>
-            <% @readings.each do |r| %>
-                <tr>
-                  <td><%= r[:date] %></td>
-                  <td><%= r[:power_kWh] %></td>
-                </tr>
-            <% end %>
-        </tbody>
-      </table>
-    </section>
-  </aside>
+      <!--<div class="text-center">Total Power = <%#= total_power.round(3) %> kWh</div>-->
+  </div>
+  <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
+    <button type="button" class="btn btn-lg" id="next-month-button">
+      Next Month >
+    </button>
+    <button type="button" class="btn btn-lg" id="next-year-button">
+      Next Year >>
+    </button>
+  </div>
 </div>
+<!--<div class="row">-->
+  <!--<aside class="span10 offset1">-->
+    <!--<section>-->
+    <!--</section>-->
+    <!--<section>-->
+      <!--<%#= form_tag show_month_five_minute_readings_path, method: 'get' do %>-->
+          <!--<%#= render 'shared/error_messages' %>-->
+          <!--<%#= f.label :date %>-->
+          <!--<div class="well">-->
+            <!--<div id="date1" class="input-append date">-->
+              <!--<%#= f.text_field :time, :data_format {'dd/MM/yyyy'} %>-->
+              <!--<input id="date" name="date" type="text" data-format="yyyy-MM" value="<%#= @year+'-'+@month %>"/>-->
+              <!--<span class="add-on">-->
+                <!--<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>-->
+              <!--</span>-->
+            <!--</div>-->
+          <!--</div>-->
+          <!--&lt;!&ndash; TODO move this into five_minute_readings.js.coffee &ndash;&gt;-->
+          <!--<script type="text/javascript">-->
+//              $(function() {
+//                  $('#date1').datetimepicker({
+//                      format: 'yyyy-MM',
+//                      language: 'en',
+//                      pickTime: false
+//                  });
+//              });
+          <!--</script>-->
+          <!--<%#= submit_tag 'Choose Date' %>-->
+      <!--<#% end %>-->
+    <!--</section>-->
+  <!--</aside>-->
+<!--</div>-->
