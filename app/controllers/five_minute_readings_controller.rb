@@ -8,6 +8,11 @@ class FiveMinuteReadingsController < ApplicationController
     @reading = FiveMinuteReading.find(params[:id])
   end
 
+  def today
+    date = Date.today()
+    redirect_to '/five_minute_readings/show_day?date='+date.strftime('%Y-%m-%d')
+  end
+
   def show_day
     date = DateTime.strptime(params[:date], '%Y-%m-%d')
     @year = date.strftime('%Y')

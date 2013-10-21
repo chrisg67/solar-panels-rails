@@ -3,6 +3,7 @@ SolarPanels::Application.routes.draw do
     collection do
       get 'show_day'
       get 'show_month'
+      get 'today'
     end
   end
 
@@ -10,6 +11,8 @@ SolarPanels::Application.routes.draw do
   match '/new_five_minute_reading', to: 'five_minute_readings#new', via: 'get'
   match 'five_minute_readings/new', to: 'five_minute_readings#create', via: 'post'
   match 'five_minute_readings/new_api', to: 'five_minute_readings#create_api', via: 'post'
+
+  match '/', to: 'five_minute_readings#today', via: 'get'
  
 
   # The priority is based upon order of creation: first created -> highest priority.
