@@ -1,5 +1,4 @@
 <% provide(:title, 'Show Reading') %>
-<h1 id='heading'>Preparing Readings</h1>
 <div class="row">
   <div class="span1"></div>
   <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
@@ -11,6 +10,7 @@
     </button>
   </div>
   <div class="span8" style="vertical-align:middle;display:table-cell;float:none">
+      <h1 id='heading'>Preparing Readings</h1>
       <script type="text/javascript" src="https://www.google.com/jsapi"></script>
       <script type="text/javascript">
           google.load("visualization", "1", {packages:["corechart"]});
@@ -50,7 +50,6 @@
 
           function handleQueryResult(response) {
               $('#heading').text('Readings for '+year+'-'+month);
-              $('#date').val(year+'-'+month);
               //location.href = '?date='+year+'-'+month;
               var data = response.getDataTable();
 
@@ -78,35 +77,3 @@
     </button>
   </div>
 </div>
-<!--<div class="row">-->
-  <!--<aside class="span10 offset1">-->
-    <!--<section>-->
-    <!--</section>-->
-    <!--<section>-->
-      <!--<%#= form_tag show_month_five_minute_readings_path, method: 'get' do %>-->
-          <!--<%#= render 'shared/error_messages' %>-->
-          <!--<%#= f.label :date %>-->
-          <!--<div class="well">-->
-            <!--<div id="date1" class="input-append date">-->
-              <!--<%#= f.text_field :time, :data_format {'dd/MM/yyyy'} %>-->
-              <!--<input id="date" name="date" type="text" data-format="yyyy-MM" value="<%#= @year+'-'+@month %>"/>-->
-              <!--<span class="add-on">-->
-                <!--<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>-->
-              <!--</span>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--&lt;!&ndash; TODO move this into five_minute_readings.js.coffee &ndash;&gt;-->
-          <!--<script type="text/javascript">-->
-//              $(function() {
-//                  $('#date1').datetimepicker({
-//                      format: 'yyyy-MM',
-//                      language: 'en',
-//                      pickTime: false
-//                  });
-//              });
-          <!--</script>-->
-          <!--<%#= submit_tag 'Choose Date' %>-->
-      <!--<#% end %>-->
-    <!--</section>-->
-  <!--</aside>-->
-<!--</div>-->

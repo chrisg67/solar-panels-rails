@@ -1,98 +1,77 @@
 <% provide(:title, 'Show Reading') %>
-<h1>Readings for <%= @date %></h1>
 <div class="row">
-  <aside class="span10 offset1">
-    <section>
-      <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-      <script type="text/javascript">
-          google.load("visualization", "1", {packages:["corechart"]});
-          google.setOnLoadCallback(drawChart);
-          function drawChart() {
-              var data = new google.visualization.DataTable();
-              data.addColumn('datetime', 'Time');
-              data.addColumn('number', 'KW');
-              data.addColumn('number', 'KWh');
-              data.addRows([
-              <% total_power = 0.0 %>
-              <% last_time = Date.strptime(@date,'%Y-%m-%d') %>
-              <% last_power = 0.0 %>
-              [new Date(<%=  last_time.strftime('%Y,%m-1,%d,00,00,00') %>), 0.0, <%= total_power %>],
-              <% @readings.each do |r| %>
-                  <% if total_power == 0.0 %>
-                    <% last_time = r.time - 5.minutes %>
-                    [new Date(<%=  last_time.strftime('%Y,%m-1,%d,00,00,00') %>), 0.0, <%= total_power.round(3) %>],
-                  <% end %>
-                  <% total_power += r.power / 12 %>
-                  [new Date(<%=r.time.strftime('%Y,%m-1,%d,%H,%M,%S') %>), <%= r.power.round(3) %>, <%= total_power.round(3) %>],
-                  <% last_time = r.time %>
-                  <% last_power = r.power %>
-              <% end %>
-              <% last_time = last_time + 5.minutes; %>
-              <%# if last_power > 0 %>
-                  [new Date(<%=  last_time.strftime('%Y,%m-1,%d,%H,%M,%S') %>), 0.0, <%= total_power.round(3) %>],
-                  [new Date(<%=  Date.strptime(@date,'%Y-%m-%d').strftime('%Y,%m-1,%d,23,59,00') %>), 0.0, <%= total_power.round(3) %>],
-              <%# end %>
-              ]);
+    <div class="span1"></div>
+    <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
+        <button type="button" class="btn btn-default btn-lg" id="prev-month-button">
+          Prev Month <
+        </button>
+        <button type="button" class="btn btn-default btn-lg" id="prev-year-button">
+          Prev Year <<
+        </button>
+    </div>
+    <div class="span8" style="vertical-align:middle;display:table-cell;float:none">
+        <h1 id="heading">Readings for <%= @date %></h1>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart"]});
+            google.setOnLoadCallback(onLoad);
+            var year = <%= @year %>;
+            var month = <%= @month %>;
+            var day = <%= @day %>
+
+            function onLoad() {
+                fetchDay();
+                $("#prev-month-button").click(function(){
+                    month = month - 1;
+                    if ( month < 1 ) { month = 12; year -= 1; }
+                    fetchDay();
+                });
+
+                $("#prev-year-button").click(function(){
+                    year = year - 1;
+                    fetchDay();
+                });
+
+                $("#next-month-button").click(function(){
+                    month = month + 1;
+                    if ( month > 12 ) { month = 1; year += 1; }
+                    fetchDay();
+                });
+
+                $("#next-year-button").click(function(){
+                    year = year + 1;
+                    fetchDay();
+                });
+            };
+
+            function fetchDay() {
+                var query = new google.visualization.Query('show_day.json?date='+year+'-'+month+'-'+day);
+                query.send(handleQueryResult)
+            }
+
+            function handleQueryResult(response) {
+                $('#heading').text('Readings for '+year+'-'+month+'-'+day);
+                var data = response.getDataTable();
 
               // Create and draw the visualization.
-              new google.visualization.LineChart(document.getElementById('chart_div')).
-                      draw(data, {vAxes: {0: {maxValue: 4},
-                          1: {maxValue: 30}},
-                          hAxis: {viewWindowMode: 'pretty',
-                              maxValue: new Date(<%= Date.strptime(@date,'%Y-%m-%d').strftime('%Y,%m-1,%d') %>,23,59,00)},
-                          series: {0:{targetAxisIndex:0},
-                              1:{targetAxisIndex:1}}
-                      }
-              );
-          }
-
-      </script>
-      <div id="chart_div" style="width: 100%; height: 500px; position: relative; "></div>
-      <div class="text-center">Total Power = <%= total_power.round(3) %> kWh</div>
-    </section>
-    <section>
-      <%= form_tag show_day_five_minute_readings_path, method: 'get' do %>
-          <%#= render 'shared/error_messages' %>
-          <%#= f.label :date %>
-          <div class="well">
-            <div id="date1" class="input-append date">
-              <%#= f.text_field :time, :data_format {'dd/MM/yyyy'} %>
-              <input id="date" name="date" type="text" data-format="yyyy-MM-dd" value="<%= @date %>"/>
-              <span class="add-on">
-                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-              </span>
-            </div>
-          </div>
-          <!-- TODO move this into five_minute_readings.js.coffee -->
-          <script type="text/javascript">
-              $(function() {
-                  $('#date1').datetimepicker({
-                      format: 'yyyy-MM-dd',
-                      language: 'en',
-                      pickTime: false
-                  });
-              });
-          </script>
-          <%= submit_tag 'Choose Date' %>
-      <% end %>
-    </section>
-    <!--<section>-->
-      <!--<table class="table table-striped table-bordered table-condensed">-->
-        <!--<thead>-->
-            <!--<tr>-->
-              <!--<td>Time</td><td>Power kW</td><td>Total Power kWh</td>-->
-            <!--</tr>-->
-        <!--</thead>-->
-        <!--<tbody>-->
-            <!--<%# @readings.each do |r| %>-->
-                <!--<tr>-->
-                  <!--<td><%#= link_to r.time.strftime('%H:%M:%S'), five_minute_reading_path( id: r.id) %></td>-->
-                  <!--<td><%#= r.power %></td>-->
-                  <!--<td><%#= r.total_power %></td>-->
-                <!--</tr>-->
-            <!--<%# end %>-->
-        <!--</tbody>-->
-      <!--</table>-->
-    <!--</section>-->
-  </aside>
+                new google.visualization.LineChart(document.getElementById('chart_div')).
+                    draw(data, {vAxes: {0: {maxValue: 4},
+                                        1: {maxValue: 30}},
+                                hAxis: {viewWindowMode: 'pretty'},
+                                series: {0:{targetAxisIndex:0},
+                                         1:{targetAxisIndex:1}}
+                    }
+                );
+            }
+        </script>
+        <div id="chart_div" style="width: 100%; height: 500px; position: relative; "></div>
+    </div>
+    <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
+        <button type="button" class="btn btn-lg" id="next-month-button">
+            Next Month >
+        </button>
+        <button type="button" class="btn btn-lg" id="next-year-button">
+            Next Year >>
+        </button>
+    </div>
 </div>
