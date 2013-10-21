@@ -2,11 +2,14 @@
 <div class="row">
     <div class="span1"></div>
     <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
-        <button type="button" class="btn btn-default btn-lg" id="prev-month-button">
-          Prev Month <
+        <button type="button" class="btn btn-lg" id="prev-day-button">
+          Prev Day<br>&lt;
         </button>
-        <button type="button" class="btn btn-default btn-lg" id="prev-year-button">
-          Prev Year <<
+        <button type="button" class="btn btn-lg" id="prev-month-button">
+          Prev Month &lt;&lt;
+        </button>
+        <button type="button" class="btn btn-lg" id="prev-year-button">
+          Prev Year &lt;&lt;&lt;
         </button>
     </div>
     <div class="span8" style="vertical-align:middle;display:table-cell;float:none">
@@ -14,37 +17,44 @@
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
             google.load("visualization", "1", {packages:["corechart"]});
-            google.setOnLoadCallback(onLoad);
+
             var year = <%= @year %>;
             var month = <%= @month %>;
-            var day = <%= @day %>
+            var day = <%= @day %>;
+
+            $(function() {onLoad();});
 
             function onLoad() {
-                fetchDay();
+                fetchDay(new Date(year, month-1, day));
+                $("#prev-day-button").click(function(){
+                    fetchDay(new Date(year, month-1, day-1));
+                });
+
                 $("#prev-month-button").click(function(){
-                    month = month - 1;
-                    if ( month < 1 ) { month = 12; year -= 1; }
-                    fetchDay();
+                    fetchDay(new Date(year, month-2, day));
                 });
 
                 $("#prev-year-button").click(function(){
-                    year = year - 1;
-                    fetchDay();
+                    fetchDay(new Date(year-1, month-1, day));
+                });
+
+                $("#next-day-button").click(function(){
+                    fetchDay(new Date(year, month-1, day+1));
                 });
 
                 $("#next-month-button").click(function(){
-                    month = month + 1;
-                    if ( month > 12 ) { month = 1; year += 1; }
-                    fetchDay();
+                    fetchDay(new Date(year, month, day));
                 });
 
                 $("#next-year-button").click(function(){
-                    year = year + 1;
-                    fetchDay();
+                    fetchDay(new Date(year+1, month-1, day));
                 });
             };
 
-            function fetchDay() {
+            function fetchDay(date) {
+                year = date.getFullYear();
+                month = date.getMonth()+1;
+                day = date.getDate();
                 var query = new google.visualization.Query('show_day.json?date='+year+'-'+month+'-'+day);
                 query.send(handleQueryResult)
             }
@@ -67,11 +77,14 @@
         <div id="chart_div" style="width: 100%; height: 500px; position: relative; "></div>
     </div>
     <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
+        <button type="button" class="btn btn-lg" id="next-day-button">
+          Next Day<br>&gt;
+        </button>
         <button type="button" class="btn btn-lg" id="next-month-button">
-            Next Month >
+            Next Month &gt;&gt;
         </button>
         <button type="button" class="btn btn-lg" id="next-year-button">
-            Next Year >>
+            Next Year &gt;&gt;&gt;
         </button>
     </div>
 </div>
