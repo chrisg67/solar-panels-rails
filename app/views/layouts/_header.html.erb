@@ -6,8 +6,9 @@
             <ul class="nav pull-right">
               <!--<li><%#= link_to "Home",    root_path %></li>-->
               <!--<li><%#= link_to "Help",    help_path %></li>-->
-              <li><%= link_to "Today", show_day_five_minute_readings_path(date: Date.today.strftime('%Y-%m-%d')) %></li>
-              <li><%= link_to "This Month", show_month_five_minute_readings_path(date: Date.today.strftime('%Y-%m'))  %></li>
+              <li><%= link_to "Today", today_five_minute_readings_path %></li>
+              <li><%= link_to "This Month", this_month_five_minute_readings_path %></li>
+              <li><%= link_to "This Year", this_year_five_minute_readings_path %></li>
               <li id="fat-menu" class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   New Reading<b class="caret"></b>

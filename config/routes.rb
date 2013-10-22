@@ -3,7 +3,10 @@ SolarPanels::Application.routes.draw do
     collection do
       get 'show_day'
       get 'show_month'
+      get 'show_year'
       get 'today'
+      get 'this_month'
+      get 'this_year'
     end
   end
 

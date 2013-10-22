@@ -13,6 +13,16 @@ class FiveMinuteReadingsController < ApplicationController
     redirect_to '/five_minute_readings/show_day?date='+date.strftime('%Y-%m-%d')
   end
 
+  def this_month
+    date = Date.today()
+    redirect_to '/five_minute_readings/show_month?date='+date.strftime('%Y-%m')
+  end
+
+  def this_year
+    date = Date.today()
+    redirect_to '/five_minute_readings/show_year?date='+date.strftime('%Y')
+  end
+
   def show_day
     date = DateTime.strptime(params[:date], '%Y-%m-%d')
     @year = date.strftime('%Y')
@@ -124,6 +134,45 @@ class FiveMinuteReadingsController < ApplicationController
                           rows: rows
                         }
                }
+        render json:resp
+      }
+    end
+  end
+
+  def show_year
+    @date = params[:date]
+    start_date = DateTime.strptime(@date, '%Y')
+    @year = start_date.strftime('%Y')
+    respond_to do |format|
+      format.html
+      format.json {
+        tqx = params[:tqx]
+        rows        = []
+        (1..12).each do |month|
+          start_date = "#{@year}-#{month.to_s.rjust(2, '0')}-01"
+          power     = FiveMinuteReading.where('time >= "'+start_date+'" AND time < date("'+start_date+'", "+1 month")').sum(:power)/12.0
+          rows << {c: [{v: "Date(#{@year}, #{(month-1).to_s}, 1)"},{v: power.round(3)}]}
+        end
+        req_id='0'
+        sig='0'
+        version='0.1'
+        tqx.split(';').each do |p|
+          val = p.split(':')
+          case val[0]
+            when /reqId/
+              req_id=val[1]
+            when /sig/
+              sig=val[1]
+            when /version/
+              version=val[1]
+          end
+        end
+        resp = {version: version, reqId: req_id, status: "ok", sig: sig,
+                table: { cols: [{id: 'date', label: 'Date', type: 'datetime', pattern: ''},
+                                {id: 'date', label: 'kWh', type: 'number', pattern: ''}],
+                         rows: rows
+                }
+        }
         render json:resp
       }
     end
