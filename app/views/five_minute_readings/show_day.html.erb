@@ -3,17 +3,22 @@
     <div class="span1"></div>
     <div class="span1" style="vertical-align:middle;display:table-cell;float:none">
         <button type="button" class="btn btn-lg" id="prev-day-button">
-          Prev Day<br>&lt;
+            Prev Day<br>&lt;
         </button>
         <button type="button" class="btn btn-lg" id="prev-month-button">
-          Prev Month &lt;&lt;
+            Prev Month &lt;&lt;
         </button>
         <button type="button" class="btn btn-lg" id="prev-year-button">
-          Prev Year &lt;&lt;&lt;
+            Prev Year &lt;&lt;&lt;
         </button>
     </div>
     <div class="span8" style="vertical-align:middle;display:table-cell;float:none">
         <h1 id="heading">Readings for <%= @date %></h1>
+        <p style="margin-right:auto;margin-left:auto;width:100px">
+            <button type="button" class="btn btn-lg" id="month-button">
+                ^ Month ^
+            </button>
+        </p>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
             google.load("visualization", "1", {packages:["corechart"]});
@@ -26,6 +31,10 @@
 
             function onLoad() {
                 fetchDay(new Date(year, month-1, day));
+                $("#month-button").click(function(){
+                    window.open("show_month?date="+year+"-"+month);
+                });
+
                 $("#prev-day-button").click(function(){
                     fetchDay(new Date(year, month-1, day-1));
                 });
