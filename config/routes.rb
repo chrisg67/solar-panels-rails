@@ -7,6 +7,8 @@ SolarPanels::Application.routes.draw do
       get 'today'
       get 'this_month'
       get 'this_year'
+      get 'all_data'
+      get 'sunburst'
     end
   end
 
@@ -15,8 +17,10 @@ SolarPanels::Application.routes.draw do
   match 'five_minute_readings/new', to: 'five_minute_readings#create', via: 'post'
   match 'five_minute_readings/new_api', to: 'five_minute_readings#create_api', via: 'post'
 
-  match '/', to: 'five_minute_readings#today', via: 'get'
- 
+  match '/', to: 'five_minute_readings#sunburst', via: 'get'
+
+  #match 'five_minute_readings/all_data_json', to: 'five_minute_readings#all_data', via: 'get'
+  #
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

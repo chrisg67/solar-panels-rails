@@ -23,6 +23,10 @@ class FiveMinuteReadingsController < ApplicationController
     redirect_to '/five_minute_readings/show_year?date='+date.strftime('%Y')
   end
 
+  def sunburst
+
+  end
+
   def show_day
     date = DateTime.strptime(params[:date], '%Y-%m-%d')
     @year = date.strftime('%Y')
@@ -176,6 +180,39 @@ class FiveMinuteReadingsController < ApplicationController
         render json:resp
       }
     end
+  end
+
+  def all_data
+    start_date = FiveMinuteReading.first.time.to_date
+    end_date = FiveMinuteReading.last.time.to_date
+    date = start_date
+    current_month = start_date.month
+    current_year = start_date.year
+    days = []
+    months = []
+    years = []
+    while date < end_date
+      date_str = date.to_s
+      month = date.month
+      year = date.year
+      if month != current_month
+        months << { name: current_month.to_s, children: days }
+        days = []
+        current_month = month
+      end
+      if year != current_year
+        years << { name: current_year.to_s, children: months }
+        months = []
+        current_year = year
+      end
+      power = FiveMinuteReading.where('time >= "'+date_str+'" AND time < date("'+date_str+'", "+1 day")').sum(:power)/12.0
+      days << { name: date.day.to_s, power: power.round(3) }
+      date += 1.day
+    end
+    months << { name: current_month.to_s, children: days } unless days.blank?
+    years << { name: current_year.to_s, children: months } unless months.blank?
+    rows = { name: "all_time", children: years }
+    render json:rows
   end
 
   def create
