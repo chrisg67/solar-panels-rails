@@ -191,26 +191,32 @@ class FiveMinuteReadingsController < ApplicationController
     days = []
     months = []
     years = []
+    month_power = 0.0
+    year_power = 0.0
     while date < end_date
       date_str = date.to_s
       month = date.month
       year = date.year
       if month != current_month
-        months << { name: current_month.to_s, children: days }
+        months << { name: current_year.to_s+'-'+current_month.to_s, power: month_power.round(3), children: days }
         days = []
+        month_power = 0.0
         current_month = month
       end
       if year != current_year
-        years << { name: current_year.to_s, children: months }
+        years << { name: current_year.to_s, power: year_power.round(3), children: months }
         months = []
+        year_power = 0.0
         current_year = year
       end
       power = FiveMinuteReading.where('time >= "'+date_str+'" AND time < date("'+date_str+'", "+1 day")').sum(:power)/12.0
-      days << { name: date.day.to_s, power: power.round(3) }
+      days << { name: date_str, power: power.round(3) }
+      month_power += power
+      year_power  += power
       date += 1.day
     end
-    months << { name: current_month.to_s, children: days } unless days.blank?
-    years << { name: current_year.to_s, children: months } unless months.blank?
+    months << { name: current_year.to_s+'-'+current_month.to_s, power: month_power.round(3), children: days } unless days.blank?
+    years << { name: current_year.to_s, power: year_power.round(3), children: months } unless months.blank?
     rows = { name: "all_time", children: years }
     render json:rows
   end
