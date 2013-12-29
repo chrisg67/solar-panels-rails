@@ -217,8 +217,7 @@ class FiveMinuteReadingsController < ApplicationController
     end
     months << { name: current_year.to_s+'-'+current_month.to_s, power: month_power.round(3), children: days } unless days.blank?
     years << { name: current_year.to_s, power: year_power.round(3), children: months } unless months.blank?
-    rows = { name: "all_time", children: years }
-    render json:rows
+    render json:years
   end
 
   def create
