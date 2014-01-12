@@ -14,11 +14,12 @@
     }
 </style>
 <div class="row">
-    <div class="span8 offset2" style="vertical-align:middle;display:table-cell;float:none" id="sunburst"></div>
+    <div class="span1"></div>
+    <div class="span10" style="vertical-align:middle;display:table-cell;float:none" id="sunburst"></div>
 </div>
 
 <script>
-    var width = 840,
+    var width = 800,
             height = width,
             radius = width / 2,
             x = d3.scale.linear().range([0, 2 * Math.PI]),
@@ -39,6 +40,7 @@
 
     div.append("p")
             .attr("id", "intro")
+            .attr("style", "text-align:center")
             .text("Click to zoom!");
 
     var tip = d3.select("#sunburst").append("div")
